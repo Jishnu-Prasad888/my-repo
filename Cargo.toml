@@ -1,0 +1,48 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/termnote-core",
+    "crates/termnote-storage",
+    "crates/termnote-pty",
+    "crates/termnote-session",
+    "crates/termnote-editor",
+    "crates/termnote-export",
+    "crates/termnote-tui",
+    "crates/termnote-cli",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["termnote contributors"]
+repository = "https://example.com/termnote"
+
+[workspace.dependencies]
+termnote-core = { path = "crates/termnote-core" }
+termnote-storage = { path = "crates/termnote-storage" }
+termnote-pty = { path = "crates/termnote-pty" }
+termnote-session = { path = "crates/termnote-session" }
+termnote-editor = { path = "crates/termnote-editor" }
+termnote-export = { path = "crates/termnote-export" }
+termnote-tui = { path = "crates/termnote-tui" }
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "1"
+anyhow = "1"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+toml = "0.8"
+directories = "5"
+tracing = "0.1"
+# Note: the Debian-packaged tracing-subscriber ships without the
+# "env-filter" feature (its `regex`/`matchers` deps aren't packaged), so
+# termnote-cli implements a tiny manual RUST_LOG level parser instead.
+tracing-subscriber = "0.3"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+panic = "abort"
+codegen-units = 1
+strip = true
