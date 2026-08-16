@@ -1,0 +1,13 @@
+[package]
+name = "termnote-pty"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+# No portable-pty dependency: implemented directly on top of `nix` so the
+# PTY layer stays small, auditable, and free of an unpackaged dependency.
+[dependencies]
+thiserror.workspace = true
+tracing.workspace = true
+nix = { version = "0.27", features = ["term", "process", "signal", "poll", "fs", "ioctl"] }
+libc = "0.2"
