@@ -1,0 +1,9 @@
+[package]
+name = "termnote-editor"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+tempfile = "3"
