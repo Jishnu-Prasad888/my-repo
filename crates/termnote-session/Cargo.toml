@@ -1,0 +1,19 @@
+[package]
+name = "termnote-session"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+termnote-core.workspace = true
+termnote-storage.workspace = true
+termnote-pty.workspace = true
+termnote-editor.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+nix = { version = "0.27", features = ["term", "process", "signal", "poll", "fs"] }
+libc = "0.2"
+crossterm = "0.27"
+signal-hook = "0.3"
+serde_json.workspace = true
