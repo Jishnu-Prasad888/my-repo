@@ -24,6 +24,7 @@ fn run() -> anyhow::Result<()> {
     match cli.command {
         Some(Command::New { name, logging }) => commands::cmd_new(&db, &name, logging),
         Some(Command::Attach { name, logging }) => commands::cmd_attach(&db, &name, logging),
+        Some(Command::Detach) => commands::cmd_detach(&db),
         Some(Command::List { all }) => commands::cmd_list(&db, all),
         Some(Command::Timeline { name }) => commands::cmd_timeline(&db, &name),
         Some(Command::Note { editor }) => commands::cmd_note(&db, editor.as_deref()),

@@ -38,6 +38,11 @@ pub enum Command {
         logging: LoggingArgs,
     },
 
+    /// Detach the active session in this terminal, ending its recording
+    /// shell and transitioning the session to `DETACHED` (PRD §3, §17).
+    /// Run as a command from inside a session you're attached to.
+    Detach,
+
     /// List sessions.
     List {
         /// Include archived sessions.

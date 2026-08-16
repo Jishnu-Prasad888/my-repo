@@ -3,8 +3,10 @@ use std::path::PathBuf;
 
 use anyhow::{bail, Context, Result};
 
-use termnote_core::time::format_local;
-use termnote_core::{resolve_logging, LoggingOverride, SessionOwner};
+use termnote_core::time::{format_local, now_unix_ns};
+use termnote_core::{
+    resolve_logging, EventType, LoggingOverride, SessionLifecyclePayload, SessionOwner, SessionStatus,
+};
 use termnote_session::{AttachOutcome, SelfIdentity, TakeoverChoice};
 use termnote_storage::{bookmarks, events, notes, search as tn_search, sessions, SharedConn};
 
@@ -102,6 +104,49 @@ pub fn cmd_attach(db: &SharedConn, name: &str, logging: LoggingArgs) -> Result<(
             Ok(())
         }
     }
+}
+
+/// Detach the active session in the terminal this is run from (PRD §3, §17).
+///
+/// Like `note`/`bookmark`, this is meant to be run *as a command inside a
+/// session* you're attached to. It records a `SESSION_DETACH` event at the
+/// current timeline position and releases the session's ownership lock; the
+/// running recorder notices the ownership change within ~300ms (its watchdog),
+/// stops forwarding the PTY, and the shell ends -- leaving the session in
+/// `DETACHED` state, ready to `attach` again later.
+pub fn cmd_detach(db: &SharedConn) -> Result<()> {
+    let session = active_session_for_this_terminal(db)?;
+    if session.status != SessionStatus::Active || session.owner.is_none() {
+        bail!(
+            "session \"{}\" is not active in this terminal; nothing to detach",
+            session.name
+        );
+    }
+
+    let who = SelfIdentity::detect();
+    let payload = serde_json::to_value(SessionLifecyclePayload {
+        host: Some(who.host),
+        pid: Some(who.pid),
+        terminal: Some(who.terminal),
+        note: Some("detached via `termnote detach`".to_string()),
+    })?;
+    let now = now_unix_ns();
+    events::append_event(
+        db,
+        &session.id,
+        EventType::SessionDetach,
+        Some(now),
+        Some(now),
+        Some(0),
+        &payload,
+    )?;
+    sessions::release_ownership(db, &session.id, SessionStatus::Detached)?;
+
+    println!(
+        "Detached \"{}\". Reattach later with `termnote attach {}`.",
+        session.name, session.name
+    );
+    Ok(())
 }
 
 pub fn cmd_list(db: &SharedConn, all: bool) -> Result<()> {

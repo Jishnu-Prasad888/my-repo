@@ -81,6 +81,7 @@ rather than thrown away.
 termnote                          open the session picker
 termnote new <name>               create a session and start recording
 termnote attach <name>            attach (or reattach) to a session
+termnote detach                   detach the active session in this terminal
 termnote list [--all]             list sessions (--all includes archived)
 termnote timeline <name>          read-only browser over a session's history
 termnote note [--editor CMD]      open $EDITOR, save as a NOTE at the current position
@@ -98,11 +99,11 @@ termnote config show|set <key> <value>       global settings, e.g. logging.outpu
 termnote settings <name> show|set <key> <val> per-session override
 ```
 
-`termnote note` and `termnote bookmark` are meant to be run **as commands
-inside a session you're already attached to** — that's how they know which
-session to write to (via a `TERMNOTE_SESSION_ID` environment variable set on
-the shell termnote spawns for you), matching the PRD's "at any point, just
-run `termnote note`" workflow (§103-104).
+`termnote note`, `termnote bookmark`, and `termnote detach` are meant to be run
+**as commands inside a session you're already attached to** — that's how they
+know which session to write to (via a `TERMNOTE_SESSION_ID` environment
+variable set on the shell termnote spawns for you), matching the PRD's "at any
+point, just run `termnote note`" workflow (§103-104).
 
 ## Architecture
 
