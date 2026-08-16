@@ -1,0 +1,12 @@
+[package]
+name = "termnote-tui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+termnote-core.workspace = true
+termnote-storage.workspace = true
+ratatui = "0.23"
+crossterm = "0.27"
+anyhow.workspace = true
